@@ -125,7 +125,7 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
   /**
    * {@inheritdoc}
    */
-  public function setParent(SubdivisionInterface $parent) {
+  public function setParent(SubdivisionInterface $parent = null) {
     $this->parent = $parent;
 
     return $this;
@@ -245,6 +245,40 @@ class Subdivision extends ConfigEntityBase implements SubdivisionInterface {
    */
   public function hasChildren() {
     return !empty($this->children);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addChild(SubdivisionInterface $child)
+  {
+    if (!$this->hasChild($child)) {
+      $child->setParent($this);
+      $this->children->add($child);
+    }
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeChild(SubdivisionInterface $child)
+  {
+    if ($this->hasChild($child)) {
+      $child->setParent(null);
+      $this->children->removeElement($child);
+    }
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasChild(SubdivisionInterface $child)
+  {
+    return $this->children->contains($child);
   }
 
   /**
